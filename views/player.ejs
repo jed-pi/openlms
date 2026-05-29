@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= course.title %> · <%= orgName %></title>
+  <link rel="stylesheet" href="/public/css/styles.css">
+</head>
+<body class="player-body">
+  <div class="player-bar">
+    <a class="back" href="/dashboard">← Back to my training</a>
+    <span class="player-title"><%= course.title %></span>
+    <span id="save-status" class="save-status">Loading…</span>
+  </div>
+  <iframe id="scorm-frame" title="<%= course.title %>" allow="autoplay; fullscreen"></iframe>
+
+  <script id="scorm-config" type="application/json"><%- JSON.stringify({
+    entryUrl: entryUrl,
+    commitUrl: commitUrl,
+    learnerId: learner.id,
+    learnerName: learner.full_name,
+    resume: resume
+  }).replace(/</g, '\\u003c') %></script>
+  <script src="/vendor/scorm12.min.js"></script>
+  <script src="/public/js/scorm-player.js"></script>
+</body>
+</html>

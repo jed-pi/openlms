@@ -1,0 +1,8 @@
+<nav class="admin-nav">
+  <a href="/admin"<%= currentPath === '/admin' ? ' class="active"' : '' %>>Overview</a>
+  <a href="/admin/courses"<%= currentPath.startsWith('/admin/courses') ? ' class="active"' : '' %>>Courses</a>
+  <a href="/admin/completions"<%= currentPath === '/admin/completions' ? ' class="active"' : '' %>>Completions</a>
+  <a href="/admin/learners"<%= currentPath.startsWith('/admin/learners') ? ' class="active"' : '' %>>Learners</a>
+  <a href="/admin/tools"<%= currentPath.startsWith('/admin/tools') ? ' class="active"' : '' %>>Tool groups</a>
+  <a href="/admin/completions.csv" class="csv">⬇ Export CSV</a>
+</nav>

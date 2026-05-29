@@ -1,0 +1,50 @@
+<%- include('partials/header', { title: 'My training' }) %>
+<div class="page-head">
+  <h1>My training</h1>
+  <p class="muted"><strong><%= passedCount %></strong> of <%= total %> courses passed.</p>
+</div>
+
+<% groups.forEach(function (group) { %>
+  <section class="group">
+    <h2><%= group.category %></h2>
+    <ul class="course-list">
+      <% group.courses.forEach(function (c) { %>
+        <li class="course-row">
+          <div class="course-meta">
+            <span class="course-title"><%= c.title %></span>
+            <span class="badge <%= c.status.key %>"><%= c.status.label %></span>
+            <% if (c.gate_on_score) { %><span class="gate">Pass mark <%= c.minimum_score %>%</span><% } %>
+          </div>
+          <div class="course-actions">
+            <a class="btn" href="/play/<%= c.id %>"><%=
+              c.status.key === 'not-started' ? 'Start' : (c.status.key === 'passed' ? 'Review' : 'Continue')
+            %></a>
+            <% if (c.cert) { %>
+              <a class="btn primary" href="/certificate/<%= c.cert.id %>/download">Certificate</a>
+            <% } %>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  </section>
+<% }) %>
+
+<% if (certs.length) { %>
+  <section class="group">
+    <h2>My certificates</h2>
+    <ul class="cert-list">
+      <% certs.forEach(function (ct) { %>
+        <li class="cert-row">
+          <span class="cert-course"><%= ct.course_title %></span>
+          <span class="cert-actions">
+            <a href="/certificate/<%= ct.id %>/download">Download</a>
+            <form method="post" action="/certificate/<%= ct.id %>/resend" class="inline">
+              <button class="linkbtn">Email it to me</button>
+            </form>
+          </span>
+        </li>
+      <% }) %>
+    </ul>
+  </section>
+<% } %>
+<%- include('partials/footer') %>

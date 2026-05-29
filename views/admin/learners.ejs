@@ -1,0 +1,20 @@
+<%- include('../partials/header', { title: 'Admin · Learners' }) %>
+<h1>Learners</h1>
+<%- include('../partials/admin-nav') %>
+<table class="data">
+  <thead><tr><th>Name</th><th>Email</th><th>Passed</th><th>Verified</th><th>Admin</th><th></th></tr></thead>
+  <tbody>
+    <% learners.forEach(function (l) { %>
+      <tr>
+        <td><%= l.full_name %></td>
+        <td><%= l.email %></td>
+        <td><%= l.passed_count %></td>
+        <td><%= l.email_verified ? '✓' : '' %></td>
+        <td><%= l.is_admin ? '✓' : '' %></td>
+        <td><a href="/admin/learners/<%= l.id %>">View</a></td>
+      </tr>
+    <% }) %>
+    <% if (!learners.length) { %><tr><td colspan="6" class="muted">No learners yet.</td></tr><% } %>
+  </tbody>
+</table>
+<%- include('../partials/footer') %>

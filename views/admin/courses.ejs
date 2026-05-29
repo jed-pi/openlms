@@ -1,0 +1,24 @@
+<%- include('../partials/header', { title: 'Admin · Courses' }) %>
+<h1>Courses</h1>
+<%- include('../partials/admin-nav') %>
+<% if (saved) { %><p class="saved">✓ Saved.</p><% } %>
+<p class="muted">Edit the title and pass rule for each course. Tick "Require score" to gate on the quiz
+   score; otherwise the course passes on completion. Defaults were read from each SCORM package.</p>
+
+<table class="data">
+  <thead><tr><th>Course</th><th>Category</th><th>Pass mark %</th><th>Require score</th><th></th></tr></thead>
+  <tbody>
+    <% courses.forEach(function (c) { %>
+      <tr>
+        <form method="post" action="/admin/courses/<%= c.id %>">
+          <td><input name="title" value="<%= c.title %>" class="cell-input wide"></td>
+          <td><%= c.category %></td>
+          <td><input name="minimum_score" type="number" min="0" max="100" value="<%= c.minimum_score %>" class="cell-input num"></td>
+          <td style="text-align:center"><input type="checkbox" name="gate_on_score" <%= c.gate_on_score ? 'checked' : '' %>></td>
+          <td><button class="btn" type="submit">Save</button></td>
+        </form>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+<%- include('../partials/footer') %>

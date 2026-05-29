@@ -1,0 +1,27 @@
+{
+  "name": "whp-training",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Woodhouse Park — simple SCORM training & certificate system",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed-courses.js"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.2.17",
+    "adm-zip": "^0.5.16",
+    "cookie-session": "^2.1.0",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "nodemailer": "^8.0.10",
+    "pdf-lib": "^1.17.1",
+    "pg": "^8.13.1",
+    "qrcode": "^1.5.4",
+    "scorm-again": "^3.0.0",
+    "ulid": "^2.3.0"
+  }
+}

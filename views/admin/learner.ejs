@@ -1,0 +1,56 @@
+<%- include('../partials/header', { title: 'Admin · ' + learner.full_name }) %>
+<h1><%= learner.full_name %></h1>
+<%- include('../partials/admin-nav') %>
+
+<p class="muted">
+  <%= learner.email %>
+  · <%= learner.email_verified ? 'Email verified' : 'Email not verified' %>
+  <% if (!learner.email_verified) { %>
+    <form method="post" action="/admin/learners/<%= learner.id %>/verify" class="inline">
+      <button class="linkbtn">Mark verified</button>
+    </form>
+  <% } %>
+</p>
+
+<section class="group">
+  <h2>Course progress</h2>
+  <table class="data">
+    <thead><tr><th>Course</th><th>Status</th><th>Score</th><th>Passed</th></tr></thead>
+    <tbody>
+      <% courses.forEach(function (c) { const r = byCourse.get(c.id); %>
+        <tr>
+          <td><%= c.title %></td>
+          <td><%= r ? (r.lesson_status || '—') : 'not started' %></td>
+          <td><%= r && r.score_raw != null ? r.score_raw : '—' %></td>
+          <td><%= r && r.passed ? '✓' : '' %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</section>
+
+<section class="group">
+  <h2>Certificates</h2>
+  <% if (!certs.length) { %><p class="muted">None yet.</p><% } else { %>
+    <table class="data">
+      <thead><tr><th>Course</th><th>ID</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        <% certs.forEach(function (ct) { %>
+          <tr>
+            <td><%= ct.course_title %></td>
+            <td><code><%= ct.id %></code></td>
+            <td><%= ct.revoked ? 'Revoked' : 'Valid' %></td>
+            <td>
+              <a href="/certificate/<%= ct.id %>/download">Download</a>
+              <% if (!ct.revoked) { %>
+                · <form method="post" action="/certificate/<%= ct.id %>/resend" class="inline"><button class="linkbtn">Resend</button></form>
+                · <form method="post" action="/admin/certificates/<%= ct.id %>/revoke" class="inline"><button class="linkbtn danger">Revoke</button></form>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</section>
+<%- include('../partials/footer') %>

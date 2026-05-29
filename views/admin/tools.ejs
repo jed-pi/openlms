@@ -1,0 +1,34 @@
+<%- include('../partials/header', { title: 'Admin · Tool groups' }) %>
+<h1>Tool groups</h1>
+<%- include('../partials/admin-nav') %>
+<p class="muted">Optional: group courses into a tool/area (e.g. "Power Tools") to record which courses
+   someone needs before using it. Certificates remain per-course; this is for organising and reporting.</p>
+
+<form method="post" action="/admin/tools" class="inline-form">
+  <input name="name" placeholder="New tool/area name (e.g. Power Tools)" required>
+  <button class="btn primary" type="submit">Add</button>
+</form>
+
+<% if (!groups.length) { %>
+  <p class="muted">No tool groups yet.</p>
+<% } %>
+<% groups.forEach(function (g) { %>
+  <section class="group">
+    <div class="group-head">
+      <h2><%= g.name %></h2>
+      <form method="post" action="/admin/tools/<%= g.id %>/delete" class="inline"><button class="linkbtn danger">Delete</button></form>
+    </div>
+    <form method="post" action="/admin/tools/<%= g.id %>">
+      <div class="checkgrid">
+        <% courses.forEach(function (c) { %>
+          <label class="check">
+            <input type="checkbox" name="course_ids" value="<%= c.id %>" <%= membership.get(g.id) && membership.get(g.id).has(c.id) ? 'checked' : '' %>>
+            <span><%= c.title %> <em class="muted">(<%= c.category %>)</em></span>
+          </label>
+        <% }) %>
+      </div>
+      <button class="btn" type="submit">Save required courses</button>
+    </form>
+  </section>
+<% }) %>
+<%- include('../partials/footer') %>

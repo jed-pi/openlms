@@ -1,0 +1,14 @@
+# Replace with your real domain. Caddy obtains + renews HTTPS automatically.
+training.your-domain.org {
+    encode gzip zstd
+    reverse_proxy localhost:5050
+}
+
+# Tip: for higher traffic you can let Caddy serve the large SCORM files directly
+# from disk instead of through Node, e.g.:
+#
+#   handle_path /content/* {
+#       root * /opt/whp-training/content
+#       file_server
+#   }
+#   reverse_proxy localhost:5050

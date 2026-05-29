@@ -1,0 +1,17 @@
+<%- include('partials/header', { title: 'Verify certificate' }) %>
+<div class="card narrow verify">
+  <% if (valid) { %>
+    <h1 class="ok">✓ Valid certificate</h1>
+    <p><strong><%= learner.full_name %></strong> has successfully completed</p>
+    <p class="course-title big"><%= course.title %></p>
+    <p class="muted">Issued <%= new Date(cert.issued_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
+    <p class="muted">Certificate ID: <%= id %></p>
+  <% } else if (cert && cert.revoked) { %>
+    <h1 class="err">✗ Revoked</h1>
+    <p>This certificate (<code><%= id %></code>) has been revoked and is no longer valid.</p>
+  <% } else { %>
+    <h1 class="err">✗ Not found</h1>
+    <p>No certificate matches the ID <code><%= id %></code>.</p>
+  <% } %>
+</div>
+<%- include('partials/footer') %>

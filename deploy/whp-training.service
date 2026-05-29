@@ -1,0 +1,17 @@
+[Unit]
+Description=Woodhouse Park Training
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/whp-training
+EnvironmentFile=/opt/whp-training/.env
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=3
+User=whp
+Group=whp
+
+[Install]
+WantedBy=multi-user.target

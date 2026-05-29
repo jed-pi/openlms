@@ -1,0 +1,11 @@
+<%- include('partials/header', { title: 'Check your email' }) %>
+<div class="card narrow">
+  <h1>Check your email</h1>
+  <p>We've sent a sign-in link to <strong><%= email %></strong>. It's valid for 30 minutes and can be used once.</p>
+  <% if (devLink) { %>
+    <hr>
+    <p class="muted">SMTP isn't configured (local dev), so here's your link:</p>
+    <p><a class="btn primary" href="<%= devLink %>">Sign in now</a></p>
+  <% } %>
+</div>
+<%- include('partials/footer') %>

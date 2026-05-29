@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.local
+data/
+content/
+*.log
+.DS_Store
+backups/
+
+# The SCORM course packages under "Induction Files/" ARE committed so Coolify
+# can build a self-contained image that seeds itself on startup.

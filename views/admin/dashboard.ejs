@@ -1,0 +1,29 @@
+<%- include('../partials/header', { title: 'Admin' }) %>
+<h1>Admin</h1>
+<%- include('../partials/admin-nav') %>
+
+<div class="stats">
+  <div class="stat"><span class="num"><%= stats.learners %></span><span>Learners</span></div>
+  <div class="stat"><span class="num"><%= stats.courses %></span><span>Courses</span></div>
+  <div class="stat"><span class="num"><%= stats.passes %></span><span>Course passes</span></div>
+  <div class="stat"><span class="num"><%= stats.certs %></span><span>Certificates</span></div>
+</div>
+
+<section class="group">
+  <h2>Recent learners</h2>
+  <table class="data">
+    <thead><tr><th>Name</th><th>Email</th><th>Verified</th><th></th></tr></thead>
+    <tbody>
+      <% learners.slice(0, 10).forEach(function (l) { %>
+        <tr>
+          <td><%= l.full_name %></td>
+          <td><%= l.email %></td>
+          <td><%= l.email_verified ? '✓' : '' %></td>
+          <td><a href="/admin/learners/<%= l.id %>">View</a></td>
+        </tr>
+      <% }) %>
+      <% if (!learners.length) { %><tr><td colspan="4" class="muted">No learners yet.</td></tr><% } %>
+    </tbody>
+  </table>
+</section>
+<%- include('../partials/footer') %>

@@ -1,0 +1,32 @@
+<%- include('../partials/header', { title: 'Admin · Completions' }) %>
+<h1>Completions</h1>
+<%- include('../partials/admin-nav') %>
+<p class="muted">Who has passed what. ✓ = passed, · = started, blank = not started.
+   <a href="/admin/completions.csv">Download CSV</a>.</p>
+
+<div class="matrix-wrap">
+  <table class="data matrix">
+    <thead>
+      <tr>
+        <th class="sticky">Learner</th>
+        <% courses.forEach(function (c) { %><th class="rot"><span><%= c.title %></span></th><% }) %>
+      </tr>
+    </thead>
+    <tbody>
+      <% learners.forEach(function (l) { %>
+        <tr>
+          <td class="sticky"><a href="/admin/learners/<%= l.id %>"><%= l.full_name %></a></td>
+          <% courses.forEach(function (c) {
+               const r = map.get(l.id + ':' + c.id);
+               let mark = '', cls = '';
+               if (r && r.passed) { mark = '✓'; cls = 'pass'; }
+               else if (r) { mark = '·'; cls = 'part'; } %>
+            <td class="cellmark <%= cls %>" title="<%= c.title %>"><%= mark %></td>
+          <% }) %>
+        </tr>
+      <% }) %>
+      <% if (!learners.length) { %><tr><td class="muted">No learners yet.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/footer') %>

@@ -64,43 +64,45 @@ npm run seed       # re-seed courses (set FORCE_EXTRACT=1 to re-unzip)
 
 ---
 
-## Production setup
+## Deploy on Coolify (recommended)
 
-### 1. Database — Supabase
+The repo (`jed-pi/openlms`) includes a `Dockerfile` and the SCORM course packages, so Coolify can
+build a self-contained image that seeds itself on first run.
 
-1. Create a project at supabase.com (free tier is plenty for this scale).
-2. Copy **Project Settings → Database → Connection string → URI** (the pooler/“Transaction” string).
-3. Put it in `.env` as `DATABASE_URL=...`. The app then uses Supabase instead of the local PGlite DB.
-   The schema is created automatically on first start.
+1. **Create the application** in Coolify from this Git repository. Build pack: **Dockerfile**.
+   Set the exposed port to **3000** (the app reads `PORT`; Coolify provides HTTPS via its proxy).
+2. **Add a PostgreSQL database** resource in Coolify (one click). Then on the app set:
+   - `DATABASE_URL` = the database's connection string
+   - `DATABASE_SSL=false`  (internal Postgres on the same host isn't TLS)
 
-### 2. Email — your SMTP
+   *(Or use Supabase instead: set `DATABASE_URL` to the Supabase URI and leave `DATABASE_SSL` unset.)*
+3. **Set the remaining environment variables** (see the table below): `SITE_URL` (your public
+   domain), `SESSION_SECRET` (a long random string), `SMTP_*` + `MAIL_FROM`, and `ADMIN_EMAILS`.
+4. **Add a persistent volume** mapped to `/app/data` so generated certificate PDFs survive redeploys.
+   *(They're also regenerable from the database, so this is recommended but not strictly required.)*
+5. **Deploy.** On first start the app creates the schema and seeds the 17 courses automatically.
+   Sign in, and the email(s) in `ADMIN_EMAILS` get the admin area.
 
-Set `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, and `MAIL_FROM` in `.env`.
-Used for magic-link sign-in and certificate emails. (Leave `SMTP_HOST` empty to print emails to the
-console for testing.)
+The schema is created automatically — there is no separate migration step to run.
 
-### 3. Run the app
+---
 
-On a small VPS (≈£5/mo). Put the app in `/opt/whp-training`, set `.env`, then:
+## Alternative: VPS + systemd + Caddy
+
+If not using Coolify, run it directly on a small VPS. Set `DATABASE_URL` (Supabase) and your `SMTP_*`
+in `.env`, then:
 
 ```bash
 npm ci
-sudo cp deploy/whp-training.service /etc/systemd/system/
+sudo cp deploy/whp-training.service /etc/systemd/system/   # runs `node server.js`
 sudo systemctl enable --now whp-training
-```
-
-### 4. HTTPS — Caddy
-
-Caddy gives automatic HTTPS and proxies to the app:
-
-```bash
-sudo cp deploy/Caddyfile /etc/caddy/Caddyfile   # edit the domain first
+sudo cp deploy/Caddyfile /etc/caddy/Caddyfile               # edit the domain → automatic HTTPS
 sudo systemctl reload caddy
 ```
 
-Set `SITE_URL=https://your-domain` in `.env` so magic-link and certificate-verify URLs are correct.
+Set `SITE_URL=https://your-domain` so magic-link and certificate-verify URLs are correct.
 
-### 5. Backups
+### Backups
 
 ```bash
 deploy/backup.sh    # pg_dump (if DATABASE_URL set) + archive of data/certificates

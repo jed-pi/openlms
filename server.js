@@ -24,6 +24,9 @@ if (!courseCount || courseCount.n === 0) {
 }
 
 const app = express()
+// Behind Coolify's HTTPS reverse proxy: trust X-Forwarded-Proto so req.secure is
+// true and the `secure` session cookie is actually sent. Without this, login never sticks.
+app.set('trust proxy', 1)
 app.set('view engine', 'ejs')
 app.set('views', path.join(root, 'views'))
 app.disable('x-powered-by')

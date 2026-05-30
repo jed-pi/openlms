@@ -1,6 +1,6 @@
 // Passwordless sign-in routes.
 import express from 'express'
-import { findOrCreateLearner, createLoginToken, consumeLoginToken, normaliseEmail } from '../lib/auth.js'
+import { findOrCreateLearner, createLoginToken, consumeLoginToken, verifyLoginToken, normaliseEmail } from '../lib/auth.js'
 import { sendMagicLink } from '../lib/notify.js'
 import { config, emailEnabled } from '../lib/config.js'
 
@@ -41,7 +41,26 @@ authRouter.post('/login', async (req, res) => {
   res.render('check-email', { email, devLink: emailEnabled ? null : url })
 })
 
+// GET only *validates* the token (no consume) and shows a confirm button.
+// Email security scanners issue GETs to pre-check links — if GET consumed the
+// single-use token, the human's later click would always fail. The actual
+// sign-in happens on POST below, which scanners don't perform.
 authRouter.get('/auth/:token', async (req, res) => {
+  if (req.learner) return res.redirect(safeNext(req.query.next))
+  const learner = await verifyLoginToken(req.params.token)
+  if (!learner) {
+    return res.status(400).render('error', {
+      message: 'This sign-in link is invalid or has expired. Please request a new one.',
+    })
+  }
+  res.render('confirm-signin', {
+    token: req.params.token,
+    next: safeNext(req.query.next),
+    learner,
+  })
+})
+
+authRouter.post('/auth/:token', async (req, res) => {
   const learner = await consumeLoginToken(req.params.token)
   if (!learner) {
     return res.status(400).render('error', {
@@ -49,7 +68,7 @@ authRouter.get('/auth/:token', async (req, res) => {
     })
   }
   req.session.learnerId = learner.id
-  res.redirect(safeNext(req.query.next))
+  res.redirect(safeNext(req.body.next))
 })
 
 authRouter.post('/logout', (req, res) => {

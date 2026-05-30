@@ -1,0 +1,10 @@
+<%- include('partials/header', { title: 'Confirm sign-in' }) %>
+<div class="card narrow">
+  <h1>Sign in</h1>
+  <p>Welcome back, <strong><%= learner.full_name %></strong>. Click below to finish signing in.</p>
+  <form method="post" action="/auth/<%= token %>">
+    <input type="hidden" name="next" value="<%= next %>">
+    <button class="btn primary" type="submit">Sign in to my training</button>
+  </form>
+</div>
+<%- include('partials/footer') %>
